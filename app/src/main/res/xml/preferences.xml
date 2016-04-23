@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference android:key="host"
+                        android:title="@string/host"
+                        android:summary="@string/host_description"
+                        android:defaultValue="http://localhost:8080" />
+    <EditTextPreference android:key="adapterset"
+                        android:title="@string/adapter_set"
+                        android:summary="@string/adapter_set_description"
+                        android:defaultValue="DEMO" />
+</PreferenceScreen>

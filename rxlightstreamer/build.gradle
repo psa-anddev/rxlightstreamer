@@ -1,0 +1,100 @@
+repositories {
+    jcenter()
+    maven {
+        url "http://www.lightstreamer.com/repo/maven"
+    }
+}
+apply plugin: 'com.android.library'
+apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'maven'
+
+def groupId = 'com.psa'
+def artifactId = 'rxlightstreamer'
+def version = '0.1'
+def releaseDir = "${project.getBuildDir()}/artifacts/"
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        minSdkVersion 11
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.3.0'
+    //LightStreamer
+    compile'com.lightstreamer:ls-android-client-compact:2.0.0-a1'
+    //Dagger 2
+    compile 'com.google.dagger:dagger:2.0.1'
+    apt 'com.google.dagger:dagger-compiler:2.0.1'
+    provided 'org.glassfish:javax.annotation:10.0-b28'
+    //RxAndroid
+    compile 'io.reactivex:rxandroid:0.24.0'
+    testCompile "org.robolectric:robolectric:3.0"
+    testCompile "org.mockito:mockito-core:2.0.44-beta"
+    testCompile 'com.squareup.assertj:assertj-android:1.1.1'
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        pom.groupId = groupId
+        pom.artifactId = artifactId
+        pom.version = version
+        repository(url: "file://${releaseDir}")
+    }
+}
+
+task androidJavadocs(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    destinationDir = file("../javadoc/")
+    failOnError false
+}
+
+task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+    classifier = 'javadoc'
+    from androidJavadocs.destinationDir
+}
+
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+task zipRelease(type: Zip) {
+    from releaseDir
+    destinationDir buildDir
+    archiveName "rxlightstreamer-${version}.zip"
+}
+
+task generateRelease << {
+    println "Release ${version} can be found at ${releaseDir}"
+    println "Release ${version} zipped can be found ${buildDir}/rxlightstreamer-${version}.zip"
+}
+
+generateRelease.dependsOn(uploadArchives)
+generateRelease.dependsOn(zipRelease)
+
+artifacts {
+    archives androidSourcesJar
+    archives androidJavadocsJar
+}

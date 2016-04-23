@@ -1,0 +1,31 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!-- Headers theme -->
+    <style name="AppTheme.Header" parent="AppTheme">
+        <item name="android:textSize">24sp</item>
+        <item name="android:fontFamily" tools:ignore="NewApi">sans-serif</item>
+    </style>
+    <style name="AppTheme.Title" parent="AppTheme">
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily" tools:ignore="NewApi">sans-serif-medium</item>
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+    <style name="AppTheme.Body1" parent="AppTheme">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily" tools:ignore="NewApi">sans-serif</item>
+    </style>
+    <style name="AppTheme.Toolbar" parent="AppTheme">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:textColorPrimary">@color/lightText</item>
+        <item name="actionMenuTextColor">@color/lightText</item>
+        <item name="android:tint">@color/lightText</item>
+    </style>
+</resources>

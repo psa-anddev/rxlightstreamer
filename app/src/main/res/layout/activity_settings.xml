@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+    <include layout="@layout/include_toolbar"
+             android:id="@+id/toolbar" />
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout="@layout/fragment_status"
+        android:name="com.psa.rxlightstreamer.sample.ui.fragments.StatusFragment"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/status_fragment" />
+    <fragment
+        android:id="@+id/settings_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="com.psa.rxlightstreamer.sample.ui.fragments.SettingsFragment"
+        android:layout_below="@id/toolbar"
+        android:layout_above="@id/status_fragment"/>
+
+</RelativeLayout>
