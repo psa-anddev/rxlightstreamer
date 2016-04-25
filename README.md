@@ -43,3 +43,13 @@ example.getSubscriptionObservable().subscribe(s -> Log.d("Integer received", "Th
 ```gradle
 compile 'com.psa:rxlightstreamer:0.1'
 ```
+You also need to add the Lightstreamer repository in order to satisfy the internal dependencies with the
+official LightStreamer API.
+```gradle
+repositories {
+    jcenter()
+    maven {
+        url "http://www.lightstreamer.com/repo/maven"
+    }
+}
+```

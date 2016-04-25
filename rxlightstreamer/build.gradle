@@ -11,7 +11,7 @@ apply plugin: 'maven'
 
 def groupId = 'com.psa'
 def artifactId = 'rxlightstreamer'
-def version = '0.1'
+def version = '0.1.1'
 def releaseDir = "${project.getBuildDir()}/artifacts/"
 
 android {
