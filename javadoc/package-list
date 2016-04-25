@@ -1,0 +1,5 @@
+com.psa.rxlightstreamer.core
+com.psa.rxlightstreamer.exceptions
+com.psa.rxlightstreamer.helpers
+com.psa.rxlightstreamer.injection
+com.psa.rxlightstreamer.test.helpers
