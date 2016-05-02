@@ -1,4 +1,4 @@
-# rxlightstreamer
+# RxLightstreamer
 A library to work using LightStreamer with RxAndroid.
 ##Introduction
 RxLightStreamer is a library that allows developers to easy integrate [LightStreamer](https://www.lightstreamer.com/) with RxAndroid.
@@ -23,12 +23,15 @@ public class ExampleSubscription extends RxSubscription<Integer>
 {
   public ExampleSubscription()
   {
-      super(SubscriptionType.MERGE, "your_adapter_name", new String[]{"intField"}, new String[]{"int1", "int2"});
+      super(SubscriptionType.MERGE, "your_adapter_name", 
+            new String[]{"intField"}, new String[]{"int1", "int2"});
   }
   
   @Override
   public Observable<SubscriptionEvent<Integer>> getSubscriptionObservable() {
-      return mRawObservable.map(i -> Integer.toString(i.getValue("intField")); //mRawObservable is the one RxSubscription genrates.
+      return mRawObservable.map(
+        i -> new SubscriptionEvent<>(i.isSubscribed(), Integer.toString(i.getValue("intField"))
+      ); //mRawObservable is the one RxSubscription genrates.
   }
 }
 ```
@@ -37,7 +40,9 @@ Finally, the subscription can be subscribed and events can be received.
 ```java
 ExampleSubscription example = new ExampleSubscription();
 rxLightStreamerClient.subscribe(example);
-example.getSubscriptionObservable().subscribe(s -> Log.d("Integer received", "The new integer is " + s.getUpdatedItem());
+example.getSubscriptionObservable().subscribe(
+    s -> Log.d("Integer received", "The new integer is " + s.getUpdatedItem()
+);
 ```
 ##Adding the dependencies
 ```gradle
