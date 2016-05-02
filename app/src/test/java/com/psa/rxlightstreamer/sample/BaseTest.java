@@ -14,6 +14,14 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
+import rx.Scheduler;
+import rx.android.plugins.RxAndroidPlugins;
+import rx.android.plugins.RxAndroidSchedulersHook;
+import rx.plugins.RxJavaPlugins;
+import rx.plugins.RxJavaSchedulersHook;
+import rx.plugins.RxJavaTestPlugins;
+import rx.schedulers.Schedulers;
+
 /**
  * <p>This the base test class.</p>
  * @author Pablo Sánchez Alonso
@@ -35,6 +43,21 @@ public class BaseTest {
                         .lightStreamerModule(mLightStreamerModule)
                         .build()
                 );
+        //This piece of code ensures that all test will be performed synchronously.
+        RxJavaTestPlugins.resetPlugins();
+        RxJavaPlugins.getInstance().registerSchedulersHook(new RxJavaSchedulersHook(){
+            @Override
+            public Scheduler getIOScheduler() {
+                return Schedulers.immediate();
+            }
+        });
+        RxAndroidPlugins.getInstance().reset();
+        RxAndroidPlugins.getInstance().registerSchedulersHook(new RxAndroidSchedulersHook(){
+            @Override
+            public Scheduler getMainThreadScheduler() {
+                return Schedulers.immediate();
+            }
+        });
     }
     @Test
     public void testNothing() {
