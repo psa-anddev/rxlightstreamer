@@ -2,6 +2,8 @@ package com.psa.rxlightstreamer.injection;
 
 import com.lightstreamer.client.LightstreamerClient;
 import com.lightstreamer.client.Subscription;
+import com.lightstreamer.ls_client.ConnectionInfo;
+import com.lightstreamer.ls_client.LSClient;
 
 /**
  * <p>This is the core module for tests.</p>
@@ -14,6 +16,8 @@ public class TestCoreModule extends CoreModule {
      */
     private LightstreamerClient mLightstreamerClient;
     private Subscription mMergeSubscription, mDistinctSubscription, mRawSubscription, mCommandSubscription;
+    private LSClient mLSClient;
+    private ConnectionInfo mConnectionInfo;
 
     //region Providers
     @Override
@@ -58,6 +62,23 @@ public class TestCoreModule extends CoreModule {
         else
             return mRawSubscription;
     }
+
+    @Override
+    public LSClient provideNonUnifiedRawClient() {
+        if (mLSClient == null)
+            return super.provideNonUnifiedRawClient();
+        else
+            return mLSClient;
+    }
+
+    @Override
+    public ConnectionInfo provideConnectionInfo() {
+        if (mConnectionInfo == null)
+            return super.provideConnectionInfo();
+        else
+            return mConnectionInfo;
+    }
+
     //endregion
 
     //region Module setters
@@ -100,5 +121,22 @@ public class TestCoreModule extends CoreModule {
     public void setCommandSubscription(Subscription commandSubscription) {
         mCommandSubscription = commandSubscription;
     }
+
+    /**
+     * <p>Sets a client for testing purposes.</p>
+     * @param LSClient a client for testing purposes.
+     */
+    public void setLSClient(LSClient LSClient) {
+        mLSClient = LSClient;
+    }
+
+    /**
+     * <p>Sets a connection information object for testing purposes.</p>
+     * @param connectionInfo the connection information object to use.
+     */
+    public void setConnectionInfo(ConnectionInfo connectionInfo) {
+        mConnectionInfo = connectionInfo;
+    }
+
     //endregion
 }

@@ -2,7 +2,7 @@ package com.psa.rxlightstreamer.injection;
 
 import com.lightstreamer.client.Subscription;
 import com.psa.rxlightstreamer.core.RxLightStreamerClient;
-import com.psa.rxlightstreamer.core.RxSubscription;
+import com.psa.rxlightstreamer.core.RxNonUnifiedLSClient;
 
 import javax.inject.Named;
 
@@ -16,6 +16,8 @@ import dagger.Component;
 @Component(modules = {CoreModule.class})
 public interface RxLightStreamerComponent {
     void inject(RxLightStreamerClient rxLightStreamerClient);
+    void inject(RxNonUnifiedLSClient rxNonUnifiedLSClient);
+
     @Named("MERGE")
     Subscription mergeSubscription();
     @Named("DISTINCT")

@@ -2,6 +2,8 @@ package com.psa.rxlightstreamer.injection;
 
 import com.lightstreamer.client.LightstreamerClient;
 import com.lightstreamer.client.Subscription;
+import com.lightstreamer.ls_client.ConnectionInfo;
+import com.lightstreamer.ls_client.LSClient;
 
 import javax.inject.Named;
 
@@ -63,5 +65,25 @@ public class CoreModule {
     public Subscription provideRawSubscription()
     {
         return new Subscription("RAW");
+    }
+
+    /**
+     * <p>Provides an instance of the non unified version of LightStreamer client.</p>
+     * @return an instance of {@link LSClient}
+     */
+    @Provides
+    public LSClient provideNonUnifiedRawClient()
+    {
+        return new LSClient();
+    }
+
+    /**
+     * <p>Provides a connection information object to use to provide the connection data to the
+     * non unified LightStreamer Client.</p>
+     * @return a {@link ConnectionInfo} object.
+     */
+    @Provides
+    public ConnectionInfo provideConnectionInfo() {
+        return new ConnectionInfo();
     }
 }
