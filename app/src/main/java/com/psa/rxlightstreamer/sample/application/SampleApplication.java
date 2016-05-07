@@ -52,6 +52,6 @@ public class SampleApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        mApplicationComponent = DaggerApplicationComponent.create();
+        mApplicationComponent = DaggerApplicationComponent.builder().build();
     }
 }

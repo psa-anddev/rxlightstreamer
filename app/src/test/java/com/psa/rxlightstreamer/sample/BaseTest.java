@@ -28,7 +28,8 @@ import rx.schedulers.Schedulers;
  * @version 1.0
  */
 @RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = com.psa.rxlightstreamer.BuildConfig.class, sdk = Build.VERSION_CODES.LOLLIPOP)
+@Config(constants = com.psa.rxlightstreamer.BuildConfig.class, sdk = Build.VERSION_CODES.LOLLIPOP,
+        application = SampleApplication.class, packageName = "com.psa.rxlightstreamer.sample")
 public class BaseTest {
     protected TestLightStreamerModule mLightStreamerModule;
 

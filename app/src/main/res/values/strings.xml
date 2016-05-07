@@ -21,4 +21,14 @@
     <string name="host_description">URL of the LightStreamer service.</string>
     <string name="adapter_set">Adapter set</string>
     <string name="adapter_set_description">Adapter set to which LightStreamer will subscribe to.</string>
+    <!-- Connection Statuses -->
+    <string name="disconnected">Disconnected</string>
+    <string name="will_retry">Disconnected (Will retry)</string>
+    <string name="connecting">Connecting…</string>
+    <string name="stream_sensing">Connected - Stream Sensing…</string>
+    <string name="http_polling">Connected (HTTP polling)</string>
+    <string name="ws_polling">Connected (WebSocket polling)</string>
+    <string name="http_streaming">Connected (HTTP streaming)</string>
+    <string name="ws_streaming">Connected (WebSocket streaming)</string>
+    <string name="stalled">Stalled</string>
 </resources>
