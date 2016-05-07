@@ -1,6 +1,7 @@
 package com.psa.rxlightstreamer.sample.injection;
 
 import com.psa.rxlightstreamer.core.RxLightStreamerClient;
+import com.psa.rxlightstreamer.core.RxNonUnifiedLSClient;
 import com.psa.rxlightstreamer.sample.helpers.ServiceMediator;
 import com.psa.rxlightstreamer.sample.subscriptions.QuoteSubscription;
 
@@ -50,5 +51,14 @@ public class LightStreamerModule {
     public QuoteSubscription provideQuoteSubscription()
     {
         return new QuoteSubscription();
+    }
+
+    /**
+     * <p>Provides a non unified LightStreamer client.</p>
+     * @return a non unified LightStreamer client.
+     */
+    @Provides @Singleton
+    public RxNonUnifiedLSClient provideNonUnifiedClient() {
+        return new RxNonUnifiedLSClient();
     }
 }
