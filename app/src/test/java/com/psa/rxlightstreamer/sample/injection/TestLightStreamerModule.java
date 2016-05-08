@@ -3,6 +3,7 @@ package com.psa.rxlightstreamer.sample.injection;
 import com.psa.rxlightstreamer.core.RxLightStreamerClient;
 import com.psa.rxlightstreamer.core.RxNonUnifiedLSClient;
 import com.psa.rxlightstreamer.sample.helpers.ServiceMediator;
+import com.psa.rxlightstreamer.sample.subscriptions.QuoteNonUnifiedSubscription;
 import com.psa.rxlightstreamer.sample.subscriptions.QuoteSubscription;
 
 /**
@@ -16,6 +17,7 @@ public class TestLightStreamerModule extends LightStreamerModule {
     private RxLightStreamerClient mRxLightStreamerClient;
     private QuoteSubscription mQuoteSubscription;
     private RxNonUnifiedLSClient mNonUnifiedLSClient;
+    private QuoteNonUnifiedSubscription mQuoteNonUnifiedSubscription;
 
     //region Overriden methods
     @Override
@@ -49,6 +51,15 @@ public class TestLightStreamerModule extends LightStreamerModule {
             return super.provideNonUnifiedClient();
         else
             return mNonUnifiedLSClient;
+    }
+
+    @Override
+    public QuoteNonUnifiedSubscription provideQuoteNonUnifiedSubscription()
+    {
+        if (mQuoteNonUnifiedSubscription == null)
+            return super.provideQuoteNonUnifiedSubscription();
+        else
+            return mQuoteNonUnifiedSubscription;
     }
 
     //endregion
@@ -86,6 +97,15 @@ public class TestLightStreamerModule extends LightStreamerModule {
     public void setNonUnifiedLSClient(RxNonUnifiedLSClient nonUnifiedLSClient)
     {
         mNonUnifiedLSClient = nonUnifiedLSClient;
+    }
+
+    /**
+     * <p>Sets the non unified quote subscription for testing.</p>
+     * @param quoteNonUnifiedSubscription Quote subscription for testing.
+     */
+    public void setQuoteNonUnifiedSubscription(QuoteNonUnifiedSubscription quoteNonUnifiedSubscription)
+    {
+        mQuoteNonUnifiedSubscription = quoteNonUnifiedSubscription;
     }
 
     //endregion
