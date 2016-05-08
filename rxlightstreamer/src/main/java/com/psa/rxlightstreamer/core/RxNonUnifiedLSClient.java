@@ -53,6 +53,8 @@ public class RxNonUnifiedLSClient {
     public void connect(String host, String adapterSet, String user, String password)
     {
         mClientStatusObservable = Observable.create(subscriber -> {
+            mClientStatus = ClientStatus.CONNECTING;
+            subscriber.onNext(mClientStatus);
             mConnectionInfo.pushServerUrl = host;
             mConnectionInfo.adapter = adapterSet;
             if (user != null)
@@ -121,8 +123,6 @@ public class RxNonUnifiedLSClient {
                     }
                 };
                 mLSClient.openConnection(mConnectionInfo, mConnectionListener);
-                mClientStatus = ClientStatus.CONNECTING;
-                subscriber.onNext(mClientStatus);
             } catch (PushConnException e) {
                 subscriber.onError(e);
             } catch (PushServerException e) {
