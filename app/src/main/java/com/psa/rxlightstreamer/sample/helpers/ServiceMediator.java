@@ -53,7 +53,7 @@ public class ServiceMediator {
      */
     public void connect(String host, String adapterSet)
     {
-        mServiceSubject.onNext(new ServiceEvent(ServiceEvent.EventType.CONNECT, null, host, adapterSet));
+//        mServiceSubject.onNext(new ServiceEvent(ServiceEvent.EventType.CONNECT, null, host, adapterSet));
     }
 
     /**
@@ -61,7 +61,7 @@ public class ServiceMediator {
      */
     public void disconnect()
     {
-        mServiceSubject.onNext(new ServiceEvent(ServiceEvent.EventType.DISCONNECT, null, null, null));
+//        mServiceSubject.onNext(new ServiceEvent(ServiceEvent.EventType.DISCONNECT, null, null, null));
     }
 
     /**
@@ -70,7 +70,7 @@ public class ServiceMediator {
      */
     public void subscribe(RxSubscription subscription)
     {
-        mServiceSubject.onNext(new ServiceEvent(ServiceEvent.EventType.SUBSCRIBE, subscription, null, null));
+//        mServiceSubject.onNext(new ServiceEvent(ServiceEvent.EventType.SUBSCRIBE, subscription, null, null));
     }
 
     /**
@@ -79,7 +79,7 @@ public class ServiceMediator {
      */
     public void unsubscribe(RxSubscription subscription)
     {
-        mServiceSubject.onNext(new ServiceEvent(ServiceEvent.EventType.UNSUBSCRIBE, subscription, null, null));
+//        mServiceSubject.onNext(new ServiceEvent(ServiceEvent.EventType.UNSUBSCRIBE, subscription, null, null));
     }
     //endregion
 }
