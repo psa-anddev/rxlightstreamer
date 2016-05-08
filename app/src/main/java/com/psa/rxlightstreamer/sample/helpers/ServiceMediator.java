@@ -1,5 +1,6 @@
 package com.psa.rxlightstreamer.sample.helpers;
 
+import com.psa.rxlightstreamer.core.RxNonUnifiedSubscription;
 import com.psa.rxlightstreamer.core.RxSubscription;
 import com.psa.rxlightstreamer.helpers.ClientStatus;
 
@@ -53,7 +54,11 @@ public class ServiceMediator {
      */
     public void connect(String host, String adapterSet)
     {
-//        mServiceSubject.onNext(new ServiceEvent(ServiceEvent.EventType.CONNECT, null, host, adapterSet));
+        mServiceSubject.onNext(
+                new ServiceEvent.Builder(ServiceEvent.EventType.CONNECT)
+                .setLSHost(host).setAdapterSet(adapterSet)
+                .build()
+        );
     }
 
     /**
@@ -61,7 +66,7 @@ public class ServiceMediator {
      */
     public void disconnect()
     {
-//        mServiceSubject.onNext(new ServiceEvent(ServiceEvent.EventType.DISCONNECT, null, null, null));
+        mServiceSubject.onNext(new ServiceEvent.Builder(ServiceEvent.EventType.DISCONNECT).build());
     }
 
     /**
@@ -70,7 +75,11 @@ public class ServiceMediator {
      */
     public void subscribe(RxSubscription subscription)
     {
-//        mServiceSubject.onNext(new ServiceEvent(ServiceEvent.EventType.SUBSCRIBE, subscription, null, null));
+        mServiceSubject.onNext(
+                new ServiceEvent.Builder(ServiceEvent.EventType.SUBSCRIBE)
+                .setUnifiedSubscription(subscription)
+                .build()
+        );
     }
 
     /**
@@ -79,7 +88,37 @@ public class ServiceMediator {
      */
     public void unsubscribe(RxSubscription subscription)
     {
-//        mServiceSubject.onNext(new ServiceEvent(ServiceEvent.EventType.UNSUBSCRIBE, subscription, null, null));
+        mServiceSubject.onNext(
+                new ServiceEvent.Builder(ServiceEvent.EventType.UNSUBSCRIBE)
+                        .setUnifiedSubscription(subscription)
+                        .build()
+        );
+    }
+
+    /**
+     * <p>Subscribes the given subscription.</p>
+     * @param subscription is the subscription.
+     */
+    public void subscribe(RxNonUnifiedSubscription subscription)
+    {
+        mServiceSubject.onNext(
+                new ServiceEvent.Builder(ServiceEvent.EventType.SUBSCRIBE)
+                        .setNonUnifiedSubscription(subscription)
+                        .build()
+        );
+    }
+
+    /**
+     * <p>Unsubscribe the given subscription.</p>
+     * @param subscription subscription to unsubscribe.
+     */
+    public void unsubscribe(RxNonUnifiedSubscription subscription)
+    {
+        mServiceSubject.onNext(
+                new ServiceEvent.Builder(ServiceEvent.EventType.UNSUBSCRIBE)
+                        .setNonUnifiedSubscription(subscription)
+                        .build()
+        );
     }
     //endregion
 }
