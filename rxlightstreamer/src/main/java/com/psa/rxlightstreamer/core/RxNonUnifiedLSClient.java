@@ -149,6 +149,7 @@ public class RxNonUnifiedLSClient {
     public void disconnect()
     {
         mLSClient.closeConnection();
+        mSubscriptions.clear();
     }
 
     /**

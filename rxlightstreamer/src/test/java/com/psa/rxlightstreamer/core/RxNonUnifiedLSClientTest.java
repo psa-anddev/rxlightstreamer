@@ -340,6 +340,10 @@ public class RxNonUnifiedLSClientTest extends BaseTest {
             when(mSubscription.getHandyTableListener()).thenReturn(mHandyTableListener);
             when(mLSClient.subscribeTable(mExtendedTableInfo, mHandyTableListener, false)).thenReturn(mSubscribedTableKey);
             mRxNonUnifiedLSClient.subscribe(mSubscription);
+
+            assertThat(mRxNonUnifiedLSClient.getSubscriptionsCount()).isEqualTo(1);
+            assertThat(mRxNonUnifiedLSClient.getSubscription(0)).isEqualTo(mSubscription);
+
             verify(mSubscription).getExtendedTableInfo();
             verify(mSubscription).getHandyTableListener();
             verify(mSubscription).setSubscribedTableKey(mSubscribedTableKey);
@@ -365,6 +369,7 @@ public class RxNonUnifiedLSClientTest extends BaseTest {
         try {
             when(mSubscription.getSubscribedTableKey()).thenReturn(mSubscribedTableKey);
             mRxNonUnifiedLSClient.unsubscribe(mSubscription);
+            assertThat(mRxNonUnifiedLSClient.getSubscriptionsCount()).isEqualTo(0);
             verify(mSubscription).getSubscribedTableKey();
             verify(mLSClient).unsubscribeTable(mSubscribedTableKey);
             verifyNoMoreInteractions(mLSClient, mSubscription);

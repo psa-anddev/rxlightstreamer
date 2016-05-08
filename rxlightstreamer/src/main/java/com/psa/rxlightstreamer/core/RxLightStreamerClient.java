@@ -107,6 +107,7 @@ public class RxLightStreamerClient {
     public void disconnect()
     {
         mLightstreamerClient.disconnect();
+        mSubscriptions.clear();
     }
 
     /**
