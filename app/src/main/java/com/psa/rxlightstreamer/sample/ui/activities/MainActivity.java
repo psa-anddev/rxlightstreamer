@@ -8,14 +8,17 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.psa.rxlightstreamer.core.RxSubscription;
 import com.psa.rxlightstreamer.helpers.ClientStatus;
 import com.psa.rxlightstreamer.sample.R;
 import com.psa.rxlightstreamer.sample.application.SampleApplication;
 import com.psa.rxlightstreamer.sample.helpers.ServiceMediator;
 import com.psa.rxlightstreamer.sample.services.LightStreamerService;
+import com.psa.rxlightstreamer.sample.subscriptions.QuoteNonUnifiedSubscription;
 import com.psa.rxlightstreamer.sample.subscriptions.QuoteSubscription;
 import com.psa.rxlightstreamer.sample.ui.adapters.StockListAdapter;
 
@@ -28,15 +31,19 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.Subscriptions;
 
 public class MainActivity extends AppCompatActivity {
     @Inject
     ServiceMediator mServiceMediator;
     @Inject
     QuoteSubscription mQuoteSubscription;
+    @Inject
+    QuoteNonUnifiedSubscription mQuoteNonUnifiedSubscription;
 
     @Bind(R.id.stock_list)
     RecyclerView mStockList;
@@ -106,40 +113,62 @@ public class MainActivity extends AppCompatActivity {
         }
         mStockList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mStockList.setAdapter(new StockListAdapter((SampleApplication) getApplication(), mQuotes));
-        mRxQuoteSubscription = mQuoteSubscription.getSubscriptionObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(s -> {
-                    if (s.getUpdatedItem() == null) {
-                        mSubscriptionSubscribed = s.isSubscribed();
-                    }
-                    else {
-                        QuoteSubscription.Quote updatedQuote = s.getUpdatedItem();
-                        for(QuoteSubscription.Quote quote: mQuotes)
-                        {
-                            if (updatedQuote.getId().equals(quote.getId()))
-                            {
-                                quote.setStockName(updatedQuote.getStockName());
-                                quote.setLastPrice(updatedQuote.getLastPrice());
-                                quote.setTime(updatedQuote.getTime());
-                                quote.setChange(updatedQuote.getChange());
-                                quote.setBid(updatedQuote.getBid());
-                                quote.setBidSize(updatedQuote.getBidSize());
-                                quote.setAsk(updatedQuote.getAsk());
-                                quote.setAskSize(updatedQuote.getAskSize());
-                                quote.setOpen(updatedQuote.getOpen());
-                                quote.setRef(updatedQuote.getRef());
-                                quote.setMax(updatedQuote.getMax());
-                                quote.setMin(updatedQuote.getMin());
-                            }
-                        }
-                    }
-                }, Throwable::printStackTrace);
+        final boolean unifiedMode = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("unified", false);
+        Log.d("Lighstreamer API", unifiedMode?"Unified":"Non unified");
+
+        mRxQuoteSubscription = Subscriptions.empty();
         mRxClientSubscription = mServiceMediator.getClientStatusSubject()
                 .subscribe(s -> {
                     if (!mSubscriptionSubscribed && (s == ClientStatus.WS_STREAMING || s == ClientStatus.HTTP_STREAMING)) {
-                        mServiceMediator.subscribe(mQuoteSubscription);
+                        Observable<RxSubscription.SubscriptionEvent<QuoteSubscription.Quote>> observable;
+                        if (unifiedMode)
+                        {
+                            mServiceMediator.subscribe(mQuoteSubscription);
+                            observable = mQuoteSubscription.getSubscriptionObservable();
+                        }
+                        else
+                        {
+                            mServiceMediator.subscribe(mQuoteNonUnifiedSubscription);
+                            observable = mQuoteNonUnifiedSubscription.getSubscriptionObservable();
+                        }
+                        mRxQuoteSubscription = observable
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(sb -> {
+                                    if (sb.getUpdatedItem() == null) {
+                                        mSubscriptionSubscribed = sb.isSubscribed();
+                                    }
+                                    else {
+                                        QuoteSubscription.Quote updatedQuote = sb.getUpdatedItem();
+                                        Log.d("New update", updatedQuote.getId() + " " + updatedQuote.getStockName());
+                                        for(QuoteSubscription.Quote quote: mQuotes)
+                                        {
+                                            Log.d("Analyzing quote", quote.getId());
+                                            if (updatedQuote.getId().equals(quote.getId()))
+                                            {
+                                                Log.d("Quote updated", quote.getId());
+                                                quote.setStockName(updatedQuote.getStockName());
+                                                quote.setLastPrice(updatedQuote.getLastPrice());
+                                                quote.setTime(updatedQuote.getTime());
+                                                quote.setChange(updatedQuote.getChange());
+                                                quote.setBid(updatedQuote.getBid());
+                                                quote.setBidSize(updatedQuote.getBidSize());
+                                                quote.setAsk(updatedQuote.getAsk());
+                                                quote.setAskSize(updatedQuote.getAskSize());
+                                                quote.setOpen(updatedQuote.getOpen());
+                                                quote.setRef(updatedQuote.getRef());
+                                                quote.setMax(updatedQuote.getMax());
+                                                quote.setMin(updatedQuote.getMin());
+                                            }
+                                        }
+                                    }
+                                }, Throwable::printStackTrace);
                         mSubscriptionSubscribed = true;
+                    }
+                    else if (s == ClientStatus.DISCONNECTED || s == ClientStatus.WILL_RETRY)
+                    {
+                        mRxQuoteSubscription.unsubscribe();
+                        mSubscriptionSubscribed = false;
                     }
                 });
     }

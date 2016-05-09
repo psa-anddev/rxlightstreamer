@@ -8,6 +8,7 @@ import com.lightstreamer.ls_client.UpdateInfo;
 import com.psa.rxlightstreamer.helpers.SubscriptionType;
 
 import rx.Observable;
+import rx.subjects.BehaviorSubject;
 
 /**
  * <p>This class represents a subscription for using with the non-unified API.</p>
@@ -20,6 +21,7 @@ public abstract class RxNonUnifiedSubscription<T> {
     private String[] mFields, mItems;
     private String mAdapter;
     private boolean mSnapshot;
+    private BehaviorSubject<RxSubscription.SubscriptionEvent<UpdateInfo>> mRawSubject;
     protected Observable<RxSubscription.SubscriptionEvent<UpdateInfo>> mRawObservable;
     private ExtendedTableInfo mExtendedTableInfo;
     private HandyTableListener mHandyTableListener;
@@ -140,43 +142,50 @@ public abstract class RxNonUnifiedSubscription<T> {
      */
     private void resetObservable()
     {
-        mRawObservable = Observable.create(subscriber -> {
-            try {
-                mExtendedTableInfo = new ExtendedTableInfo(mItems, mSubscriptionType.getLSSubscriptionType(), mFields, mSnapshot);
-                mExtendedTableInfo.setDataAdapter(mAdapter);
-                mHandyTableListener = new HandyTableListener() {
-                    @Override
-                    public void onUpdate(int i, String s, UpdateInfo updateInfo) {
-                        subscriber.onNext(new RxSubscription.SubscriptionEvent<>(true, updateInfo));
-                    }
+        try
+        {
+            mRawSubject = BehaviorSubject.create();
+            mRawObservable = mRawSubject.asObservable();
+            mExtendedTableInfo = new ExtendedTableInfo(mItems, mSubscriptionType.getLSSubscriptionType(), mFields, mSnapshot);
+            mExtendedTableInfo.setDataAdapter(mAdapter);
+            mHandyTableListener = new HandyTableListener()
+            {
+                @Override
+                public void onUpdate(int i, String s, UpdateInfo updateInfo)
+                {
+                    mRawSubject.onNext(new RxSubscription.SubscriptionEvent<>(true, updateInfo));
+                }
 
-                    @Override
-                    public void onSnapshotEnd(int i, String s) {
+                @Override
+                public void onSnapshotEnd(int i, String s)
+                {
 
-                    }
+                }
 
-                    @Override
-                    public void onRawUpdatesLost(int i, String s, int i1) {
+                @Override
+                public void onRawUpdatesLost(int i, String s, int i1)
+                {
 
-                    }
+                }
 
-                    @Override
-                    public void onUnsubscr(int i, String s) {
+                @Override
+                public void onUnsubscr(int i, String s)
+                {
 
-                    }
+                }
 
-                    @Override
-                    public void onUnsubscrAll() {
-                        subscriber.onNext(new RxSubscription.SubscriptionEvent<UpdateInfo>(false, null));
-                        subscriber.onCompleted();
-                        resetObservable();
-                    }
-                };
-                subscriber.onNext(new RxSubscription.SubscriptionEvent<UpdateInfo>(true, null));
-            } catch (SubscrException e) {
-                subscriber.onError(e);
-            }
-        });
+                @Override
+                public void onUnsubscrAll()
+                {
+                    mRawSubject.onNext(new RxSubscription.SubscriptionEvent<>(false, null));
+                    mRawSubject.onNext(new RxSubscription.SubscriptionEvent<>(false, null));
+                }
+            };
+        }
+        catch (SubscrException e)
+        {
+            mRawSubject.onError(e);
+        }
     }
     //endregion
 }

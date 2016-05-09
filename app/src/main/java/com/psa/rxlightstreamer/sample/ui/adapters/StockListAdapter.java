@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.psa.rxlightstreamer.sample.R;
 import com.psa.rxlightstreamer.sample.application.SampleApplication;
 import com.psa.rxlightstreamer.sample.helpers.ServiceMediator;
+import com.psa.rxlightstreamer.sample.subscriptions.QuoteNonUnifiedSubscription;
 import com.psa.rxlightstreamer.sample.subscriptions.QuoteSubscription;
 
 import java.text.NumberFormat;
@@ -36,7 +37,8 @@ public class StockListAdapter extends RecyclerView.Adapter<StockListAdapter.Stoc
 
     //region Injected objects
     @Inject ServiceMediator mServiceMediator;
-    @Inject QuoteSubscription mQuoteSubscription;
+    @Inject
+    QuoteNonUnifiedSubscription mQuoteSubscription;
     //endregion
 
     //region properties definition

@@ -3,8 +3,6 @@ package com.psa.rxlightstreamer.sample.injection;
 import com.psa.rxlightstreamer.sample.helpers.ServiceMediator;
 import com.psa.rxlightstreamer.sample.presenters.StatusBarPresenter;
 
-import javax.inject.Inject;
-
 import dagger.Module;
 import dagger.Provides;
 
@@ -17,11 +15,8 @@ import dagger.Provides;
 @Module
 public class PresentersModule
 {
-    @Inject
-    ServiceMediator mServiceMediator;
-
-    @Provides public StatusBarPresenter provideStatusBarPresenter()
+    @Provides public StatusBarPresenter provideStatusBarPresenter(ServiceMediator serviceMediator)
     {
-        return new StatusBarPresenter(mServiceMediator);
+        return new StatusBarPresenter(serviceMediator);
     }
 }
