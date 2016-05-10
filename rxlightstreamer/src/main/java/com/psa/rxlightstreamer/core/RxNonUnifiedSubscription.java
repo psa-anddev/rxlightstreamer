@@ -131,6 +131,7 @@ public abstract class RxNonUnifiedSubscription<T> {
      */
     public void setSubscribedTableKey(SubscribedTableKey subscribedTableKey) {
         mSubscribedTableKey = subscribedTableKey;
+        mRawSubject.onNext(new RxSubscription.SubscriptionEvent<>(true, null)); //An event is sent to confirm subscription
     }
 
     //endregion
@@ -177,7 +178,6 @@ public abstract class RxNonUnifiedSubscription<T> {
                 @Override
                 public void onUnsubscrAll()
                 {
-                    mRawSubject.onNext(new RxSubscription.SubscriptionEvent<>(false, null));
                     mRawSubject.onNext(new RxSubscription.SubscriptionEvent<>(false, null));
                 }
             };

@@ -1,11 +1,13 @@
 package com.psa.rxlightstreamer.sample.ui.adapters;
 
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.psa.rxlightstreamer.core.RxSubscription;
 import com.psa.rxlightstreamer.sample.R;
 import com.psa.rxlightstreamer.sample.application.SampleApplication;
 import com.psa.rxlightstreamer.sample.helpers.ServiceMediator;
@@ -19,6 +21,7 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -38,11 +41,13 @@ public class StockListAdapter extends RecyclerView.Adapter<StockListAdapter.Stoc
     //region Injected objects
     @Inject ServiceMediator mServiceMediator;
     @Inject
-    QuoteNonUnifiedSubscription mQuoteSubscription;
+    QuoteNonUnifiedSubscription mQuoteNonUnifiedSubscription;
+    @Inject QuoteSubscription mQuoteUnifiedSubscription;
     //endregion
 
     //region properties definition
     private List<QuoteSubscription.Quote> mQuotes;
+    private SampleApplication mSampleApplication;
     //endregion
 
     //region Overridden methods
@@ -72,7 +77,7 @@ public class StockListAdapter extends RecyclerView.Adapter<StockListAdapter.Stoc
     @Override
     public void onBindViewHolder(StockListBaseViewHolder holder, int position) {
         if (holder instanceof ItemViewStockListViewHolder)
-            ((ItemViewStockListViewHolder) holder).bind(mQuotes.get(position - 1));
+            ((ItemViewStockListViewHolder) holder).bind(mQuotes.get(position - 1), mSampleApplication);
     }
 
     @Override
@@ -109,6 +114,7 @@ public class StockListAdapter extends RecyclerView.Adapter<StockListAdapter.Stoc
     public StockListAdapter(SampleApplication sampleApplication, List<QuoteSubscription.Quote> quotes) {
         sampleApplication.getApplicationComponent().inject(this);
         mQuotes = quotes;
+        mSampleApplication = sampleApplication;
     }
 
     //endregion
@@ -175,19 +181,24 @@ public class StockListAdapter extends RecyclerView.Adapter<StockListAdapter.Stoc
          * <p>Binds the data into the view.</p>
          * @param quote is the quote to bind.
          */
-        public void bind(QuoteSubscription.Quote quote)
+        public void bind(QuoteSubscription.Quote quote, SampleApplication sampleApplication)
         {
             boolean subscribe = mQuote == null;
             mQuote = quote;
             if (subscribe)
             {
-                mSubscription = mQuoteSubscription.getSubscriptionObservable()
+                Observable<RxSubscription.SubscriptionEvent<QuoteSubscription.Quote>> observable;
+                if (PreferenceManager.getDefaultSharedPreferences(sampleApplication).getBoolean("unified", false))
+                    observable = mQuoteUnifiedSubscription.getSubscriptionObservable();
+                else
+                    observable = mQuoteNonUnifiedSubscription.getSubscriptionObservable();
+                mSubscription = observable
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(i -> {
                             QuoteSubscription.Quote quote1 = i.getUpdatedItem();
                             if (quote1 != null && quote1.getId().equals(mQuote.getId()))
-                                bind(quote1);
+                                bind(quote1, sampleApplication);
                         },
                                 Throwable::printStackTrace
                         );

@@ -1,5 +1,6 @@
 package com.psa.rxlightstreamer.sample.injection;
 
+import com.psa.rxlightstreamer.sample.helpers.ServiceMediator;
 import com.psa.rxlightstreamer.sample.presenters.StatusBarPresenter;
 
 /**
@@ -13,10 +14,10 @@ public class TestPresentersModule extends PresentersModule
     private StatusBarPresenter mStatusBarPresenter;
 
     @Override
-    public StatusBarPresenter provideStatusBarPresenter()
+    public StatusBarPresenter provideStatusBarPresenter(ServiceMediator serviceMediator)
     {
         if (mStatusBarPresenter == null)
-            return super.provideStatusBarPresenter();
+            return super.provideStatusBarPresenter(serviceMediator);
         else
             return mStatusBarPresenter;
     }

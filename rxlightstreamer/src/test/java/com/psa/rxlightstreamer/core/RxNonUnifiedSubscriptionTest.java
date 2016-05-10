@@ -1,5 +1,6 @@
 package com.psa.rxlightstreamer.core;
 
+import com.lightstreamer.ls_client.SubscribedTableKey;
 import com.lightstreamer.ls_client.UpdateInfo;
 import com.psa.rxlightstreamer.BaseTest;
 import com.psa.rxlightstreamer.helpers.SubscriptionType;
@@ -12,6 +13,7 @@ import rx.observers.TestSubscriber;
 
 import static junit.framework.Assert.fail;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 /**
  * <p>Feature: As a user, I want to be able to subscribe to subscriptions using the non unified
@@ -94,6 +96,7 @@ public class RxNonUnifiedSubscriptionTest extends BaseTest {
     {
         try {
             mTestNonUnifiedSubscription.getSubscriptionObservable().subscribe(mTestSubscriber);
+            mTestNonUnifiedSubscription.setSubscribedTableKey(mock(SubscribedTableKey.class));
             mTestNonUnifiedSubscription.getHandyTableListener().onUpdate(0, "1", mUpdateInfo);
             assertThat(mTestSubscriber.getOnNextEvents().get(1).isSubscribed()).isTrue();
             assertThat(mTestSubscriber.getOnNextEvents().get(1).getUpdatedItem()).isEqualTo(mUpdateInfo);
@@ -114,10 +117,10 @@ public class RxNonUnifiedSubscriptionTest extends BaseTest {
     {
         try {
             mTestNonUnifiedSubscription.getSubscriptionObservable().subscribe(mTestSubscriber);
+            mTestNonUnifiedSubscription.setSubscribedTableKey(mock(SubscribedTableKey.class));
             mTestNonUnifiedSubscription.getHandyTableListener().onUnsubscrAll();
             assertThat(mTestSubscriber.getOnNextEvents().get(1).isSubscribed()).isFalse();
             assertThat(mTestSubscriber.getOnNextEvents().get(1).getUpdatedItem()).isNull();
-            assertThat(mTestSubscriber.getOnCompletedEvents()).hasSize(1);
         }
         catch (Exception ex) {
             ex.printStackTrace();

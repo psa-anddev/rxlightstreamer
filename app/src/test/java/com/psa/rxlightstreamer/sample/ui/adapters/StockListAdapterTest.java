@@ -103,7 +103,7 @@ public class StockListAdapterTest extends BaseTest {
             mStockListAdapter = new StockListAdapter((SampleApplication) RuntimeEnvironment.application,
                     quotes);
             mStockListAdapter.bindViewHolder(mItemViewStockListViewHolder, 1);
-            verify(mItemViewStockListViewHolder).bind(mQuote);
+            verify(mItemViewStockListViewHolder).bind(mQuote, (SampleApplication) RuntimeEnvironment.application);
         }
         catch (Exception ex)
         {
