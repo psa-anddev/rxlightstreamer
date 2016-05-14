@@ -1,7 +1,7 @@
 package com.psa.rxlightstreamer.sample.subscriptions;
 
 import com.lightstreamer.client.ItemUpdate;
-import com.psa.rxlightstreamer.core.RxSubscription;
+import com.psa.rxlightstreamer.core.RxSubscription.SubscriptionEvent;
 import com.psa.rxlightstreamer.sample.BaseTest;
 import com.psa.rxlightstreamer.sample.test.subscriptions.QuoteTestSubscription;
 
@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import java.math.BigDecimal;
 import java.util.List;
 
-import rx.Observable;
 import rx.observers.TestSubscriber;
 
 import static junit.framework.Assert.fail;
@@ -19,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static rx.Observable.just;
 
 /**
  * <p>Feature: The quote subscription returns the prices as expected.</p>
@@ -31,7 +31,7 @@ public class QuoteSubscriptionTest extends BaseTest {
     private ItemUpdate mItemUpdate;
 
     private QuoteTestSubscription mQuoteTestSubscription;
-    private TestSubscriber<RxSubscription.SubscriptionEvent<QuoteSubscription.Quote>> mSubscriptionEventTestSubscriber;
+    private TestSubscriber<SubscriptionEvent<QuoteSubscription.Quote>> mSubscriptionEventTestSubscriber;
 
     @Override
     public void setUp() {
@@ -64,12 +64,12 @@ public class QuoteSubscriptionTest extends BaseTest {
             when(mItemUpdate.getValue("ref_price")).thenReturn("0.15");
             when(mItemUpdate.getValue("open_price")).thenReturn("0.16");
 
-            mQuoteTestSubscription.setRawObservable(Observable.just(new RxSubscription.SubscriptionEvent<>(true, mItemUpdate)));
+            mQuoteTestSubscription.setRawObservable(just(new SubscriptionEvent<>(true, mItemUpdate)));
             mQuoteTestSubscription.getSubscriptionObservable().subscribe(mSubscriptionEventTestSubscriber);
-            List<RxSubscription.SubscriptionEvent<QuoteSubscription.Quote>> events = mSubscriptionEventTestSubscriber.getOnNextEvents();
+            List<SubscriptionEvent<QuoteSubscription.Quote>> events = mSubscriptionEventTestSubscriber.getOnNextEvents();
             assertThat(events).hasSize(1);
 
-            RxSubscription.SubscriptionEvent<QuoteSubscription.Quote> event = events.get(0);
+            SubscriptionEvent<QuoteSubscription.Quote> event = events.get(0);
             assertThat(event.isSubscribed()).isTrue();
             QuoteSubscription.Quote quote = event.getUpdatedItem();
             assertThat(quote.getId()).isEqualTo("item1");
@@ -102,6 +102,31 @@ public class QuoteSubscriptionTest extends BaseTest {
             verifyNoMoreInteractions(mItemUpdate);
         }
         catch(Exception ex)
+        {
+            ex.printStackTrace();
+            fail("Unexpected exception thrown!");
+        }
+    }
+    /**
+    * <p>Scenario: The application doesn't crash due to a null item update.</p>
+    * <p>Given I am connected to LightStreamer
+    * When I subscribe or unsubsribe
+    * Then I get the first and the last event without the application crashing.</p>
+    */
+    @Test
+    public void testApplicationWillNotCrashIfNullStockPriceIsReceived()
+    {
+        try
+        {
+            mQuoteTestSubscription.setRawObservable(just(new SubscriptionEvent<>(true, null)));
+            mQuoteTestSubscription.getSubscriptionObservable().subscribe(mSubscriptionEventTestSubscriber);
+            assertThat(mSubscriptionEventTestSubscriber.getOnNextEvents().size()).isEqualTo(1);
+            SubscriptionEvent<QuoteSubscription.Quote> subscriptionEvent =
+                    mSubscriptionEventTestSubscriber.getOnNextEvents().get(0);
+            assertThat(subscriptionEvent.isSubscribed()).isTrue();
+            assertThat(subscriptionEvent.getUpdatedItem()).isNull();
+        }
+        catch (Exception ex)
         {
             ex.printStackTrace();
             fail("Unexpected exception thrown!");
