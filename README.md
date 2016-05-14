@@ -3,7 +3,8 @@ A library to work using LightStreamer with RxAndroid.
 ##Introduction
 RxLightStreamer is a library that allows developers to easy integrate [LightStreamer](https://www.lightstreamer.com/) with RxAndroid.
 
-##How to use it
+## How to use it
+### Using the unified API
 Once you have added the dependency to your gradle, you can start by connecting a LightStreamer client.
 ```java
 RxLightStreamerClient rxLightStreamerClient = new RxLightStreamerClient();
@@ -41,12 +42,37 @@ Finally, the subscription can be subscribed and events can be received.
 ExampleSubscription example = new ExampleSubscription();
 rxLightStreamerClient.subscribe(example);
 example.getSubscriptionObservable().subscribe(
-    s -> Log.d("Integer received", "The new integer is " + s.getUpdatedItem()
+    s -> Log.d("Integer received", "The new integer is " + s.getUpdatedItem())
 );
 ```
-##Adding the dependencies
+### Using the non unified API
+The client is connected this way
+```java
+RxNonUnifiedLSClient lsClient = new RxNonUnifiedLSClient();
+lsClient.connect("myhost", "adapter set", "user", "password);
+```
+
+The adapters are created by extending RxNonUnifiedSubscription
+```java
+public class MySubscription extends RxNonUnifiedSubscription<String>
+{
+    @Overrides
+    public Observable<SubscriptionEvent<String>> getSubscriptionObservable()
+    {
+        return mRawObservable.map(i -> i.getItemValue().getNewValue());
+    }
+    
+    public MySubscription()
+    {
+        super(SubscriptionType.MERGE, "adapter", new String[]{"Fields"}, new String[]{"items"}, true);
+    }
+}
+```
+The rest is pretty much the same as in the unified API.
+
+## Adding the dependencies
 ```gradle
-compile 'com.psa:rxlightstreamer:0.1.1'
+compile 'com.psa:rxlightstreamer:0.1.3'
 ```
 You also need to add the Lightstreamer repository in order to satisfy the internal dependencies with the
 official LightStreamer API.
