@@ -59,7 +59,7 @@ public class MySubscription extends RxNonUnifiedSubscription<String>
     @Overrides
     public Observable<SubscriptionEvent<String>> getSubscriptionObservable()
     {
-        return mRawObservable.map(i -> i.getItemValue().getNewValue("items"));
+        return mRawObservable.map(i -> i.getItemValue().getNewValue("Fields"));
     }
     
     public MySubscription()
