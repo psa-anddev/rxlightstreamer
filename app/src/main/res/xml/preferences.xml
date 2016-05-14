@@ -8,4 +8,8 @@
                         android:title="@string/adapter_set"
                         android:summary="@string/adapter_set_description"
                         android:defaultValue="DEMO" />
+    <CheckBoxPreference android:key="unified"
+        android:title="@string/user_unified_api"
+        android:summary="@string/use_unified_api_desc"
+        android:defaultValue="false"/>
 </PreferenceScreen>

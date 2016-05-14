@@ -21,6 +21,8 @@
     <string name="host_description">URL of the LightStreamer service.</string>
     <string name="adapter_set">Adapter set</string>
     <string name="adapter_set_description">Adapter set to which LightStreamer will subscribe to.</string>
+    <string name="user_unified_api">Use unified API</string>
+    <string name="use_unified_api_desc">Will use the unified LightStreamer API.</string>
     <!-- Connection Statuses -->
     <string name="disconnected">Disconnected</string>
     <string name="will_retry">Disconnected (Will retry)</string>
